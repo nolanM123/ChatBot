@@ -68,6 +68,8 @@ Firstly download the repository. Then run the "Main.py" file.
 
 **commands:**
 
+    Commands are to be used in the ChatBot user input box.
+
     --local "Creates local enviroment for user and bot"
     --host <ip> <port> "Creates enviroment as host for other applications to join"
     --join <ip> <port> "Creates enviroment as client to join the host application"
