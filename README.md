@@ -19,7 +19,7 @@ This is a general-purpose ChatBot about retail clothing and accessories. ChatBot
 
 ![alt text](https://github.com/Team-22-COSC-310/ChatBot/blob/main/Assets/Images/GUI%20Example.png?raw=true)
 
-### Extra Topics the bot can suggest other theatricals of clothing. (0.5 points)
+### Extra Topics the bot can suggest other atricals of clothing. (0.5 points)
 - This helps the user better extrapolate their feelings towards the product and give the system usefully feedback.
     
 **example:**

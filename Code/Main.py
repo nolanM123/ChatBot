@@ -2,6 +2,7 @@ import time
 import socket
 import threading
 from tkinter import *
+from googletrans import Translator
 from preprocess import parse_string as ps
 from category import find_category as fc
 from subject import find_subject as fs
@@ -96,10 +97,13 @@ class Socket(threading.Thread):
         while self.mainloop is True:
             msg: str = self._receive()
             time.sleep(1.5)
+            language: str = self.translator.detect(msg).lang
+            msg = self.translator.translate(msg, src=language, dest="en").text
             msg = ps(msg)
             category: str = fc(msg)
             subject: str = fs(msg)
             response: str = gs(category, subject)
+            response = self.translator.translate(response, src="en", dest=language).text
             self._send(response)
 
         app.log("[System]: Closing Socket...\n\n")
@@ -119,6 +123,7 @@ class ChatApplication:
         This is the core class for the ChatBot GUI. It is responsible for the GUI and returning a response to the user
         :return None:
         """
+        self.translator: Translator = Translator()
         self.socket: Optional[Socket] = None
         self.COMMANDS: dict["str", callable] = {
             "--help": self._help,
@@ -251,10 +256,13 @@ class ChatApplication:
                 self.log("User: {msg}\n\n".format(msg=msg))
 
                 # generate and insert bot message
+                language: str = self.translator.detect(msg).lang
+                msg = self.translator.translate(msg, src=language, dest="en").text
                 msg = ps(msg)
                 category: str = fc(msg)
                 subject: str = fs(msg)
                 response: str = gs(category, subject)
+                response = self.translator.translate(response, src="en", dest=language).text
                 self.log("Customer Service: {response}\n\n".format(response=response))
 
     def log(self, msg: str) -> None:
@@ -275,7 +283,7 @@ class ChatApplication:
         :return None:
         """
         self.log(
-            "Commands\n    --help\n    --local\n    --host <ip> <port>\n    --join <ip> "
+            "Commands\n    --help\n    --lang <language>\n    --local\n    --host <ip> <port>\n    --join <ip> "
             "<port>\n    --quit\n\n"
         )
 
