@@ -341,6 +341,7 @@ class ChatApplication:
         :param str _command: is not used for function
         :return None:
         """
+        self._close_socket()
         self.root.destroy()
 
 
