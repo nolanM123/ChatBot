@@ -1,4 +1,5 @@
 import random
+import googlemaps
 from subject import subjects
 
 """
@@ -13,35 +14,44 @@ def generate_response(category: str, subject: str) -> str:
     :param str subject: a subject from the bots know categories
     :return str: a response from the category and subject
     """
-    return random.choice(response_types[category]).format(subject=subject, product=random.choice(subjects))
+
+    if subject not in gmaps_cache:
+        gmaps_cache[subject] = [place for place in gmaps.places(subject)["results"] if place["rating"] >= 4]
+
+    place = random.choice(gmaps_cache[subject])["name"]
+    return random.choice(response_types[category]).format(subject=subject, product=random.choice(subjects), place=place)
 
 
+gmaps: googlemaps.Client = googlemaps.Client("AIzaSyD-VSKO-AGHeTx1ygQ9h1qigZKdKXgh30o")
+gmaps_cache: dict = dict()
 product_satisfaction_responses: list[str] = [
     "Awesome! I am so glad you enjoyed your {subject}. What was the best part about the {subject}?",
-    "That is great! We take so much pride in our {subject}'s. What about it did you enjoy the most?",
+    "That is great! We take so much pride in our {subject}. What about it did you enjoy the most?",
     "I am so glad you're happy with your {subject}! Is there anything about your {subject} you enjoyed in "
     "particular?",
+    "That is great! Have you bought {subject} from {place}?",
 ]
 
 complaint_responses: list[str] = [
     "I am sorry to hear about that. What in particular was wrong with the {subject}?",
-    "I am sorry to hear that about your {subject}. Is there anything you can let us to improve it?",
+    "I am sorry to hear that about your {subject}. Have you tried shopping at {place}?",
     "Thank you for sharing your complaint about are {subject}. Is there anything we could do in the future to "
     "prevent this?",
+    "I am sorry to hear that. Have you tried alternative retailers like {place}?"
 ]
 
 review_responses: list[str] = [
-    "I will note your review on are {subject}'s. Is there more you would like to talk about?",
-    "Thank you for sharing, I will note your review on are {subject}'s. Is there anything else I can help you "
+    "I will note your review on are {subject}. Is there more you would like to talk about?",
+    "Thank you for sharing, I will note your review on are {subject}. Is there anything else I can help you "
     "with?",
-    "Thank you for your input about are {subject}'s. Your review will be noted. Is there anything else you "
+    "Thank you for your input about are {subject}. Your review will be noted. Is there anything else you "
     "wanted to share?",
 ]
 
 suggestion_responses: list[str] = [
-    "I would recommend a {product}. What do you think of that?",
-    "You should check out are {product}. Does this product interest you?",
-    "From your interests I would suggest {product}."
+    "I would recommend {subject} at {place}. What do you think of that?",
+    "You should check out are {subject} at {place}. Does this product interest you?",
+    "From your interests I would suggest {subject} from {place}."
 ]
 
 greeting_responses: list[str] = [
